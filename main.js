@@ -1,9 +1,14 @@
-import { app, BrowserWindow } from "electron/main";
+import { app, BrowserWindow, ipcMain } from "electron/main";
 
 function createWindow() {
+  const preloadUrl = new URL("./preload.mjs", import.meta.url);
+
   const win = new BrowserWindow({
     width: 800,
     height: 600,
+    webPreferences: {
+      preload: preloadUrl.pathname,
+    },
   });
 
   win.loadFile("./index.html");
@@ -17,6 +22,8 @@ app.whenReady().then(() => {
       createWindow();
     }
   });
+
+  ipcMain.handle("ping", () => "pong");
 });
 
 app.on("window-all-closed", () => {
